@@ -106,6 +106,7 @@ public class Command implements StudentEnrollmentManager {
 
     }
 
+    int i = 0;
     @Override
     public List<StudentEnrollment> getAllStudentEnrollment() {
         return this.studentEnrollmentList;

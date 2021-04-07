@@ -18,6 +18,7 @@ public class StudentEnrollment {
     public Course getCourse() {
         return course;
     }
+    int i = 0;
 
     public String getSemester() {
         return semester;

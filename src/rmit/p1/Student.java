@@ -19,6 +19,7 @@ public class Student {
         return name;
     }
 
+    int i = 0;
     public String getBirthday() {
         return birthday;
     }
