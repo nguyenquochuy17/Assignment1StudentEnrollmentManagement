@@ -20,14 +20,16 @@ public class Main {
         ArrayList<Course> courseList = new ArrayList<Course>();
         courseList.add(course1);
         courseList.add(course2);
-
+    //Add studentEnrollment
         Command test = new Command();
         test.addStudentEnrollment(studentList,courseList);
+
+    // Print all Enrollment
         for (StudentEnrollment enrollment : test.getAllStudentEnrollment()){
             System.out.println(enrollment.toString());
         }
 
     }
 
-    int i = 0;
+
 }

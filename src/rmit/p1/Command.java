@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Command implements StudentEnrollmentManager {
-    private List<StudentEnrollment> studentEnrollmentList = new ArrayList<>();
+//    private List<StudentEnrollment> studentEnrollmentList = new ArrayList<>();
 
     @Override
     public void addStudentEnrollment(ArrayList<Student> studentList, ArrayList<Course> courseList) {
@@ -99,6 +99,7 @@ public class Command implements StudentEnrollmentManager {
         // Update Student Id
 
 
+
     }
 
     @Override
@@ -106,7 +107,7 @@ public class Command implements StudentEnrollmentManager {
 
     }
 
-    int i = 0;
+
     @Override
     public List<StudentEnrollment> getAllStudentEnrollment() {
         return this.studentEnrollmentList;
