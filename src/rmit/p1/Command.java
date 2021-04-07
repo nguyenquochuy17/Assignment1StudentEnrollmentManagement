@@ -96,6 +96,7 @@ public class Command implements StudentEnrollmentManager {
                 System.out.println("Not exsit student Id");
             }
         }
+        int i = 0;
         // Update Student Id
 
 
