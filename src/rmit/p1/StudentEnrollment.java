@@ -39,11 +39,10 @@ public class StudentEnrollment {
     @Override
     public String
     toString() {
-        return "StudentEnrollment: " +
-                "student = " + student.getId() +
+        return "student = " + student.getId() +
                 " "+ student.getName()+
                 " || course = " + course.getId() + " " + course.getName()+
-                " || semester=" + semester
+                " || semester = " + semester
                 ;
     }
 }
