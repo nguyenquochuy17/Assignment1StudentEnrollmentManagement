@@ -5,6 +5,7 @@ import java.sql.SQLOutput;
 import java.util.*;
 
 public class Command implements StudentEnrollmentManager {
+    List<StudentEnrollment> studentEnrollmentList = new ArrayList<>();
     HashSet<Student> studentList = new LinkedHashSet<>();
     HashSet<Course> courseList = new LinkedHashSet<>();
     HashSet<String> semList = new LinkedHashSet<>();
@@ -13,28 +14,52 @@ public class Command implements StudentEnrollmentManager {
     public Command() throws FileNotFoundException {
         readCSVFile();
     }
-
+    private String InputFileName(){
+        while(true) {
+            System.out.print("Do you want to add file (Y/N): ");
+            Scanner input = new Scanner(System.in);
+            String option = input.nextLine();
+            // if Yes use default, if no then use file name they enter
+            if (option.equals("Y") || option.equals("y")) {
+                System.out.print("Enter your file name: ");
+                String fileName = input.nextLine();
+                return fileName;
+            }else if (option.equals("N") || option.equals("n")) {
+                return "default.csv";
+            }else{
+                System.out.println("Wrong input");
+            }
+        }
+    }
     private void readCSVFile() throws FileNotFoundException {
-        File fileCSV = new File("default.csv");
+        File fileCSV = new File(InputFileName());
         Scanner input = new Scanner(fileCSV);
         while(input.hasNext()){
+            // Read line Csv
             String line = input.nextLine();
             line = line.replaceAll("[\\n\\t ]", "");
             String[] token = line.split(",");
             token[0] = token[0].replaceAll("[^a-zA-Z0-9]", "");
+            //Create student
             Student stu = new Student(token[0],token[1],token[2]);
+            // Check Duplicate stu
             if(!checkDuplicateStudent(stu)) {
                 studentList.add(stu);
             }
+            // Create Course
             Course course = new Course(token[3],token[4],token[5]);
+            // Check Duplicate Course
             if(!checkDuplicateCourse(course)) {
                 courseList.add(course);
             }
-
+            // Create sem
             semList.add(token[6]);
+            // Create enrollment
             StudentEnrollment studentEnrollment = new StudentEnrollment(stu,course,token[6]);
+            // Add to enrollment List
             studentEnrollmentList.add(studentEnrollment);
         }
+
     }
 
     private boolean checkDuplicateCourse(Course newCourse){
@@ -70,9 +95,10 @@ public class Command implements StudentEnrollmentManager {
     }
 
     private Student checkStudent(HashSet<Student> studentList){
+        // Input Student Id and Check Student exist
         Student EnrolledStudent;
         while(true){
-            System.out.println("Input Student Id");
+            System.out.print("Input Student Id: ");
             Scanner input = new Scanner(System.in);
             String sId = input.nextLine();
             for (Student stu : studentList) {
@@ -92,9 +118,10 @@ public class Command implements StudentEnrollmentManager {
     }
 
     private Course checkCourse(HashSet<Course> courseList){
+        // Input Course Id and Check Course exist
         Course EnrolledCourse;
         while(true) {
-            System.out.println("Input Course Id");
+            System.out.print("Input Course Id: ");
             Scanner input = new Scanner(System.in);
             String courseId = input.nextLine();
             // Check student id
@@ -115,8 +142,9 @@ public class Command implements StudentEnrollmentManager {
     }
 
     private String checkSem(){
+        // Input sem Id and Check sem exist
         while(true) {
-            System.out.println("Input Sem");
+            System.out.print("Input Sem: ");
             Scanner input = new Scanner(System.in);
             String inputSem = input.nextLine();
             // Check student id
@@ -176,24 +204,27 @@ public class Command implements StudentEnrollmentManager {
         //Check student you want to update
         Student EnrolledStudent = checkStudent(studentList);
         String updateId = EnrolledStudent.getId();
-        // show student enrollment of that update id
-        showUpdateStudentEnrollment(updateId);
+        // show Course of that update id
+        showCourseOfStudent(updateId);
         int option = chooseOption();
         //Main program
         if (option ==1){
+            //Show Available Course and input Course and check course exist
             Course EnrolledCourse = checkCourse(showAvailableCourse(updateId));
+            // Show sem and check sem id exist
             showSem();
             String sem = checkSem();
+            // Create Stu Enroll
             StudentEnrollment studentEnrollment = new StudentEnrollment(EnrolledStudent,EnrolledCourse,sem);
-            // Check Duplicate
-            if(checkDuplicateEnrollment(studentEnrollment)) {
-                System.out.println("Enrollment already existed");
-            }else{
-                this.studentEnrollmentList.add(studentEnrollment);
-                System.out.println("Sucessfully add enrollment");
-            }
+
         }else if (option == 2){
-            List<StudentEnrollment> deleteEnrollmentList= showUpdateStudentEnrollment(updateId);
+            // Show course of student
+            List<StudentEnrollment> deleteEnrollmentList= showCourseOfStudent(updateId);
+            //Check empty delete
+            if(deleteEnrollmentList.isEmpty()){
+                System.out.println("There is nothing to delete");
+                return;
+            }
             // Show Update and Input delete
             int deleteId = checkDeleteEnrollId(deleteEnrollmentList);
             //Get Enrollment that you want to delete
@@ -209,7 +240,7 @@ public class Command implements StudentEnrollmentManager {
         System.out.println("1. Add new course");
         System.out.println(("2. Delete course"));
         while(true) {
-            System.out.println("Input your option");
+            System.out.print("Input your option: ");
             Scanner input = new Scanner(System.in);
             int option = input.nextInt();
             if(option != 1 && option != 2){
@@ -221,12 +252,13 @@ public class Command implements StudentEnrollmentManager {
 
     }
     private HashSet<Course> showAvailableCourse(String updateId){
+        System.out.println("Available Course: ");
         HashSet<Course> availableCourse= new HashSet<>();
         outer: for(Course course : courseList){
             for(StudentEnrollment studentEnrollment :studentEnrollmentList){
-                // if 1 compare student id vs student enroll
+                //  compare student id vs student enroll
                 if(studentEnrollment.getStudent().getId().equals(updateId) && studentEnrollment.getCourse().getId().equals(course.getId())) {
-                    // if 2 compare course with each course in course enrol
+                    // compare course with each course in course enrol
                     continue outer;
                 }
             }
@@ -237,7 +269,8 @@ public class Command implements StudentEnrollmentManager {
         return availableCourse;
     }
 
-    private List<StudentEnrollment> showUpdateStudentEnrollment(String updateId){
+    private List<StudentEnrollment> showCourseOfStudent(String updateId){
+        // Show Course of Student
         int count = 0;
         List<StudentEnrollment> deleteCourse = new ArrayList<>();
         for(StudentEnrollment studentEnrollment :studentEnrollmentList){
@@ -255,21 +288,27 @@ public class Command implements StudentEnrollmentManager {
     public void deleteEnrollment() {
         // show All Enrollment
         getAllEnrollment();
-        // Check delete enroll ID
+        // Input and Check delete enroll ID
         int deleteId = checkDeleteEnrollId(studentEnrollmentList);
         //Remove enrollment
         studentEnrollmentList.remove(deleteId-1);
     }
     private int checkDeleteEnrollId(List<StudentEnrollment> studentEnrollmentList){
+        // Input delete Id and check it
         while(true) {
-            System.out.println("Input your ID that you want to delete");
+            System.out.print("Input the number that you want to delete: ");
             Scanner input = new Scanner(System.in);
-            int deleteId = input.nextInt();
-            // Check student id
-            if(deleteId >=1 & deleteId <= studentEnrollmentList.size()) {
-                return deleteId;
-            }else{
-                System.out.println("Not exist");
+            String s = input.nextLine();
+            int deleteId = 0;
+            try {
+                deleteId = Integer.parseInt(s);
+                if(deleteId >=1 & deleteId <= studentEnrollmentList.size()) {
+                    return deleteId;
+                }else{
+                    System.out.println("Not exsit");
+                }
+            }catch(NumberFormatException e){
+                System.out.println("Wrong input");
             }
         }
     }
@@ -304,10 +343,10 @@ public class Command implements StudentEnrollmentManager {
         while(true) {
             Scanner input = new Scanner(System.in);
             String answer = input.nextLine();
-            if(answer.equals("Y")){
+            if(answer.equals("Y")|| answer.equals("y")){
                 writeToFile(fileName,record,false);
                 break;
-            }else if(answer.equals("N")){
+            }else if(answer.equals("N") || answer.equals("n")){
                 break;
             }else{
                 System.out.println("Wrong choice");
