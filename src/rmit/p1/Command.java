@@ -113,7 +113,7 @@ public class Command implements StudentEnrollmentManager {
 
     private void showCourse(){
         for (Course course: courseList){
-            System.out.println(course.getId()+" || "+course.getName()+" ||"+course.getNumOfCredit());
+            System.out.println(course.getId()+" || "+course.getName()+" || "+course.getNumOfCredit());
         }
     }
 
@@ -210,12 +210,20 @@ public class Command implements StudentEnrollmentManager {
         //Main program
         if (option ==1){
             //Show Available Course and input Course and check course exist
-            Course EnrolledCourse = checkCourse(showAvailableCourse(updateId));
+            showCourse();
+            Course EnrolledCourse = checkCourse(courseList);
             // Show sem and check sem id exist
             showSem();
             String sem = checkSem();
             // Create Stu Enroll
             StudentEnrollment studentEnrollment = new StudentEnrollment(EnrolledStudent,EnrolledCourse,sem);
+            //Check Duplicate
+            if(checkDuplicateEnrollment(studentEnrollment)) {
+                System.out.println("Enrollment already existed");
+            }else{
+                this.studentEnrollmentList.add(studentEnrollment);
+                System.out.println("Sucessfully add enrollment");
+            }
 
         }else if (option == 2){
             // Show course of student
@@ -251,23 +259,7 @@ public class Command implements StudentEnrollmentManager {
         }
 
     }
-    private HashSet<Course> showAvailableCourse(String updateId){
-        System.out.println("Available Course: ");
-        HashSet<Course> availableCourse= new HashSet<>();
-        outer: for(Course course : courseList){
-            for(StudentEnrollment studentEnrollment :studentEnrollmentList){
-                //  compare student id vs student enroll
-                if(studentEnrollment.getStudent().getId().equals(updateId) && studentEnrollment.getCourse().getId().equals(course.getId())) {
-                    // compare course with each course in course enrol
-                    continue outer;
-                }
-            }
-            availableCourse.add(course);
-             System.out.println(course.getId()+" || "+course.getName());
 
-        }
-        return availableCourse;
-    }
 
     private List<StudentEnrollment> showCourseOfStudent(String updateId){
         // Show Course of Student
