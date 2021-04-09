@@ -9,6 +9,7 @@ public class StudentEnrollment {
         this.student = student;
         this.course = course;
         this.semester = semester;
+
     }
 
     public Student getStudent() {
@@ -39,7 +40,7 @@ public class StudentEnrollment {
     @Override
     public String
     toString() {
-        return "student = " + student.getId() +
+        return  "student = " + student.getId() +
                 " "+ student.getName()+
                 " || course = " + course.getId() + " " + course.getName()+
                 " || semester = " + semester
