@@ -11,27 +11,7 @@ public class Command implements StudentEnrollmentManager {
 
 
     public Command() throws FileNotFoundException {
-        // Student List Sample
-//        Student stu1 = new Student("111","Huy","28/10/2000");
-//        Student stu2 = new Student("222","Huu Huy","21/1/2000");
-//        Student stu3 = new Student("333","Tuong","8/5/1996");
-//        studentList.add(stu1);
-//        studentList.add(stu2);
-//        studentList.add(stu3);
-//        // Course List sample
-//        Course course1 = new Course("COSC111","UCD","12");
-//        Course course2 = new Course("COSC222","Programming 1","12");
-//        Course course3 = new Course("COSC333","Intro to IT","12");
-//        courseList.add(course1);
-//        courseList.add(course2);
-//        courseList.add(course3);
-//        // Semester List sample
-//        semList.add("2021A");
-//        semList.add("2021B");
-//        semList.add("2021C");
-
         readCSVFile();
-
     }
 
     private void readCSVFile() throws FileNotFoundException {
@@ -304,7 +284,7 @@ public class Command implements StudentEnrollmentManager {
         }
         System.out.println("-------------------------------------");
     }
-    public static void writeToFile(String fileName, String line, boolean append) {
+    private static void writeToFile(String fileName, String line, boolean append) {
         PrintWriter output = null;
         try {
             output = new PrintWriter(new FileWriter(fileName, append));
@@ -319,7 +299,22 @@ public class Command implements StudentEnrollmentManager {
         }
 
     }
+    private void askSaveReport(String fileName, String record){
+        System.out.print("Do you want to save the report into CSV file (Y/N) ");
+        while(true) {
+            Scanner input = new Scanner(System.in);
+            String answer = input.nextLine();
+            if(answer.equals("Y")){
+                writeToFile(fileName,record,false);
+                break;
+            }else if(answer.equals("N")){
+                break;
+            }else{
+                System.out.println("Wrong choice");
+            }
+        }
 
+    }
     public void printAllCoursesFor1StudentFor1Sem(){
         String record="";
         for (String sem : semList){
@@ -342,7 +337,7 @@ public class Command implements StudentEnrollmentManager {
             }
         }
         System.out.println(record);
-        writeToFile("Report1.csv",record,false);
+        askSaveReport("Report1.csv",record);
 
     }
     public void printAllStudentsFor1CourseFor1Sem(){
@@ -367,7 +362,7 @@ public class Command implements StudentEnrollmentManager {
             }
         }
         System.out.println(record);
-        writeToFile("Report2.csv",record,false);
+        askSaveReport("Report2.csv",record);
 
     }
     public void printAllCourseOfferdInSemester(){
@@ -387,7 +382,7 @@ public class Command implements StudentEnrollmentManager {
             }
         }
         System.out.println(record);
-        writeToFile("Report3.csv",record,false);
+        askSaveReport("Report3.csv",record);
     }
 
 
