@@ -89,6 +89,7 @@ public class Command implements StudentEnrollmentManager {
 
     }
     private void showStudents(){
+        System.out.println("All Students: ");
         for (Student stu: studentList){
             System.out.println(stu.getId()+" || "+stu.getName()+" || "+stu.getBirthday());
         }
@@ -112,6 +113,7 @@ public class Command implements StudentEnrollmentManager {
     }
 
     private void showCourse(){
+        System.out.println("All Course: ");
         for (Course course: courseList){
             System.out.println(course.getId()+" || "+course.getName()+" || "+course.getNumOfCredit());
         }
@@ -136,12 +138,13 @@ public class Command implements StudentEnrollmentManager {
     }
 
     private void showSem(){
+        System.out.println("All semester: ");
         for (String sem : semList){
             System.out.println(sem);
         }
     }
 
-    private String checkSem(){
+    private String checkSem(HashSet<String> semList){
         // Input sem Id and Check sem exist
         while(true) {
             System.out.print("Input Sem: ");
@@ -184,7 +187,7 @@ public class Command implements StudentEnrollmentManager {
         // Show semester
         showSem();
         //Check semester
-        String sem = checkSem();
+        String sem = checkSem(semList);
         //Create StudentEnrollment
         StudentEnrollment studentEnrollment = new StudentEnrollment(EnrolledStudent,EnrolledCourse,sem);
         //Add StudentEnrollment into StudentEnrollment List
@@ -214,7 +217,7 @@ public class Command implements StudentEnrollmentManager {
             Course EnrolledCourse = checkCourse(courseList);
             // Show sem and check sem id exist
             showSem();
-            String sem = checkSem();
+            String sem = checkSem(semList);
             // Create Stu Enroll
             StudentEnrollment studentEnrollment = new StudentEnrollment(EnrolledStudent,EnrolledCourse,sem);
             //Check Duplicate
@@ -263,6 +266,7 @@ public class Command implements StudentEnrollmentManager {
 
     private List<StudentEnrollment> showCourseOfStudent(String updateId){
         // Show Course of Student
+        System.out.println("Enrolled Courses: ");
         int count = 0;
         List<StudentEnrollment> deleteCourse = new ArrayList<>();
         for(StudentEnrollment studentEnrollment :studentEnrollmentList){
@@ -315,6 +319,49 @@ public class Command implements StudentEnrollmentManager {
         }
         System.out.println("-------------------------------------");
     }
+
+    @Override
+    public void getOneEnrollment() {
+        // Show Student and Get sid
+        showStudents();
+        String sId = checkStudent(studentList).getId();
+        // Show available Course and Get cId
+        HashSet<Course> availableCourseList =showAvailableCourse(sId);
+        String cId = checkCourse(availableCourseList).getId();
+        //Show availabe Sem and Get sem;
+        HashSet<String> availableSemList= showAvailableSem(sId,cId);
+        String sem = checkSem(availableSemList);
+        // Main program
+        for(StudentEnrollment studentEnrollment : studentEnrollmentList){
+            if(studentEnrollment.getStudent().getId().equals(sId)&& studentEnrollment.getCourse().getId().equals(cId) && studentEnrollment.getSemester().equals(sem)){
+                System.out.println(studentEnrollment.toString());
+            }
+        }
+    }
+    private HashSet<Course> showAvailableCourse(String sId){
+        System.out.println("Available Course: ");
+        HashSet<Course> availableCourse = new HashSet<>();
+        for(StudentEnrollment studentEnrollment : studentEnrollmentList){
+            if(studentEnrollment.getStudent().getId().equals(sId)){
+                System.out.println(studentEnrollment.getCourse().getId()+ " || "+studentEnrollment.getCourse().getName());
+                availableCourse.add(studentEnrollment.getCourse());
+            }
+        }
+        return availableCourse;
+    }
+    private HashSet<String> showAvailableSem(String sId, String cId){
+        System.out.println("Available Semester: ");
+        HashSet<String> availableSem = new HashSet<>();
+        for(StudentEnrollment studentEnrollment : studentEnrollmentList){
+            if(studentEnrollment.getStudent().getId().equals(sId) && studentEnrollment.getCourse().getId().equals(cId)){
+                System.out.println(studentEnrollment.getSemester());
+                availableSem.add(studentEnrollment.getSemester());
+            }
+        }
+        return availableSem;
+    }
+
+
     private static void writeToFile(String fileName, String line, boolean append) {
         PrintWriter output = null;
         try {

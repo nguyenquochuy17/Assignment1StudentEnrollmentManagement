@@ -40,8 +40,10 @@ public class Main {
         }
         if (choice.equals("1")) {
             MenuCRUD();
+            return;
         } else if (choice.equals("2")) {
             MenuPrint();
+            return;
         } else if (choice.equals("3")) {
             return;
         }
@@ -55,15 +57,16 @@ public class Main {
         System.out.println("2. Update enrollment");
         System.out.println("3. Delete enrollment");
         System.out.println("4. Get all enrollment");
-        System.out.println("5. Back to Main Menu");
-        System.out.println("6. Exit");
+        System.out.println("5. Get one enrollment");
+        System.out.println("6. Back to Main Menu");
+        System.out.println("7. Exit");
         System.out.println("------------------------------------------------");
-        System.out.print("Choose number from 1 to 6: ");
+        System.out.print("Choose number from 1 to 7: ");
         Scanner input = new Scanner(System.in);
         String choice = input.nextLine();
-        while (!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4") && !choice.equals("5") && !choice.equals("6")) {
+        while (!choice.equals("1") && !choice.equals("2") && !choice.equals("3") && !choice.equals("4") && !choice.equals("5") && !choice.equals("6") && !choice.equals("7")) {
             System.out.println("Wrong input");
-            System.out.print("Choose number from 1 to 6: ");
+            System.out.print("Choose number from 1 to 7: ");
             choice = input.nextLine();
         }
         if (choice.equals("1")) {
@@ -75,9 +78,11 @@ public class Main {
         } else if (choice.equals("4")) {
             run.getAllEnrollment();
         } else if (choice.equals("5")) {
+            run.getOneEnrollment();
+        }else if (choice.equals("6")){
             mainMenu();
             return;
-        }else if (choice.equals("6")){
+        }else if (choice.equals("7")){
             return;
         }
         while (true) {
