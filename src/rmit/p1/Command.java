@@ -265,7 +265,7 @@ public class Command implements StudentEnrollmentManager {
 
     }
 
-    int a = 0;
+
     private List<StudentEnrollment> showCourseOfStudent(String updateId){
         // Show Course of Student
         System.out.println("Enrolled Courses: ");
