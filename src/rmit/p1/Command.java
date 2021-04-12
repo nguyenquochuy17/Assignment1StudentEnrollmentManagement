@@ -49,6 +49,7 @@ public class Command implements StudentEnrollmentManager {
             // Create Course
             Course course = new Course(token[3],token[4],Integer.parseInt(token[5]));
             // Check Duplicate Course
+
             if(!checkDuplicateCourse(course)) {
                 courseList.add(course);
             }
@@ -242,6 +243,7 @@ public class Command implements StudentEnrollmentManager {
             StudentEnrollment DeletedEnroll = deleteEnrollmentList.get(deleteId-1);
             //Delete enrollment
             studentEnrollmentList.remove(DeletedEnroll);
+            System.out.println("Successfully delete");
         }
 
     }
@@ -288,6 +290,7 @@ public class Command implements StudentEnrollmentManager {
         int deleteId = checkDeleteEnrollId(studentEnrollmentList);
         //Remove enrollment
         studentEnrollmentList.remove(deleteId-1);
+        System.out.println("Successfully delete");
     }
     private int checkDeleteEnrollId(List<StudentEnrollment> studentEnrollmentList){
         // Input delete Id and check it
