@@ -3,9 +3,9 @@ package rmit.p1;
 public class Course {
     private String id;
     private String name;
-    private String numOfCredit;
+    private Integer numOfCredit;
 
-    public Course(String id, String name, String numOfCredit) {
+    public Course(String id, String name, int numOfCredit) {
         this.id = id;
         this.name = name;
         this.numOfCredit = numOfCredit;
@@ -19,7 +19,7 @@ public class Course {
         return name;
     }
 
-    public String getNumOfCredit() {
+    public int getNumOfCredit() {
         return numOfCredit;
     }
 
@@ -31,7 +31,7 @@ public class Course {
         this.name = name;
     }
 
-    public void setNumOfCredit(String numOfCredit) {
+    public void setNumOfCredit(int numOfCredit) {
         this.numOfCredit = numOfCredit;
     }
 

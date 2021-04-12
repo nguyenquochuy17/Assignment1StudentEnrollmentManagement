@@ -47,7 +47,7 @@ public class Command implements StudentEnrollmentManager {
                 studentList.add(stu);
             }
             // Create Course
-            Course course = new Course(token[3],token[4],token[5]);
+            Course course = new Course(token[3],token[4],Integer.parseInt(token[5]));
             // Check Duplicate Course
             if(!checkDuplicateCourse(course)) {
                 courseList.add(course);
