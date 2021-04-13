@@ -11,6 +11,7 @@ public class StudentEnrollment {
         this.semester = semester;
 
     }
+    public StudentEnrollment(){}
 
     public Student getStudent() {
         return student;
@@ -41,7 +42,8 @@ public class StudentEnrollment {
     toString() {
         return  "student = " + student.getId() +
                 " "+ student.getName()+
-                " || course = " + course.getId() + " " + course.getName()+
+                " "+ student.getBirthday()+
+                " || course = " + course.getId() + " " + course.getName()+" "+ course.getNumOfCredit()+
                 " || semester = " + semester
                 ;
     }

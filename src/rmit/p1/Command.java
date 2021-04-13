@@ -1,18 +1,21 @@
 package rmit.p1;
 
 import java.io.*;
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class Command implements StudentEnrollmentManager {
-    List<StudentEnrollment> studentEnrollmentList = new ArrayList<>();
-    HashSet<Student> studentList = new LinkedHashSet<>();
-    HashSet<Course> courseList = new LinkedHashSet<>();
-    HashSet<String> semList = new LinkedHashSet<>();
+    private List<StudentEnrollment> studentEnrollmentList = new ArrayList<>();
+    private ArrayList<Student> studentList = new ArrayList<>();
+    private ArrayList<Course> courseList = new ArrayList<>();
+    private HashSet<String> semList = new LinkedHashSet<>();
+
 
 
     public Command() throws FileNotFoundException {
-        readCSVFile();
+        readCSVFile(InputFileName());
+    }
+    public Command(String fileName) throws FileNotFoundException {
+        readCSVFile(fileName);
     }
     private String InputFileName(){
         while(true) {
@@ -31,8 +34,8 @@ public class Command implements StudentEnrollmentManager {
             }
         }
     }
-    private void readCSVFile() throws FileNotFoundException {
-        File fileCSV = new File(InputFileName());
+    private void readCSVFile(String filename) throws FileNotFoundException {
+        File fileCSV = new File(filename);
         Scanner input = new Scanner(fileCSV);
         while(input.hasNext()){
             // Read line Csv
@@ -96,12 +99,12 @@ public class Command implements StudentEnrollmentManager {
         }
     }
 
-    private Student checkStudent(HashSet<Student> studentList){
+    private Student inputStudent(Scanner input, ArrayList<Student> studentList){
         // Input Student Id and Check Student exist
         Student EnrolledStudent;
         while(true){
             System.out.print("Input Student Id: ");
-            Scanner input = new Scanner(System.in);
+//            Scanner input = new Scanner(System.in);
             String sId = input.nextLine();
             for (Student stu : studentList) {
                 if (sId.equals(stu.getId())) {
@@ -120,12 +123,12 @@ public class Command implements StudentEnrollmentManager {
         }
     }
 
-    private Course checkCourse(HashSet<Course> courseList){
+    private Course inputCourse(Scanner input, ArrayList<Course> courseList){
         // Input Course Id and Check Course exist
         Course EnrolledCourse;
         while(true) {
             System.out.print("Input Course Id: ");
-            Scanner input = new Scanner(System.in);
+//            Scanner input = new Scanner(System.in);
             String courseId = input.nextLine();
             // Check student id
             for (Course course : courseList) {
@@ -145,11 +148,11 @@ public class Command implements StudentEnrollmentManager {
         }
     }
 
-    private String checkSem(HashSet<String> semList){
+    private String inputSem(Scanner input, HashSet<String> semList){
         // Input sem Id and Check sem exist
         while(true) {
             System.out.print("Input Sem: ");
-            Scanner input = new Scanner(System.in);
+//            Scanner input = new Scanner(System.in);
             String inputSem = input.nextLine();
             // Check student id
             for (String sem : semList) {
@@ -163,10 +166,10 @@ public class Command implements StudentEnrollmentManager {
         }
     }
 
-    private boolean checkDuplicateEnrollment(StudentEnrollment enroll) {
+    public boolean checkDuplicateEnrollment(StudentEnrollment enroll) {
         for(StudentEnrollment stuEnroll: studentEnrollmentList){
-            if(stuEnroll.getStudent().equals(enroll.getStudent())
-                    && stuEnroll.getCourse().equals(enroll.getCourse())
+            if(stuEnroll.getStudent().getId().equals(enroll.getStudent().getId())
+                    && stuEnroll.getCourse().getId().equals(enroll.getCourse().getId())
                     && stuEnroll.getSemester().equals(enroll.getSemester())){
                 return true;
             }
@@ -177,18 +180,19 @@ public class Command implements StudentEnrollmentManager {
     @Override
     public void addEnrollment() {
         System.out.println("-------Add Enrollment--------");
+        Scanner input = new Scanner(System.in);
         // Show student list
         showStudents();
         // Check student
-        Student EnrolledStudent = checkStudent(studentList);
+        Student EnrolledStudent = inputStudent(input, studentList);
         // Show course list
         showCourse();
-        // Check course
-        Course EnrolledCourse = checkCourse(courseList);
+        // Check courseinput
+        Course EnrolledCourse = inputCourse(input, courseList);
         // Show semester
         showSem();
         //Check semester
-        String sem = checkSem(semList);
+        String sem = inputSem(input, semList);
         //Create StudentEnrollment
         StudentEnrollment studentEnrollment = new StudentEnrollment(EnrolledStudent,EnrolledCourse,sem);
         //Add StudentEnrollment into StudentEnrollment List
@@ -204,21 +208,23 @@ public class Command implements StudentEnrollmentManager {
     @Override
     public void updateEnrollment() {
         //show all Student Enrollment
+        Scanner input = new Scanner(System.in);
         showStudents();
         //Check student you want to update
-        Student EnrolledStudent = checkStudent(studentList);
+        Student EnrolledStudent = inputStudent(input,studentList);
         String updateId = EnrolledStudent.getId();
         // show Course of that update id
         showCourseOfStudent(updateId);
-        int option = chooseOption();
+        String option = chooseUpdateOption(input);
         //Main program
-        if (option ==1){
+        if (option.equals("1")){
             //Show Available Course and input Course and check course exist
             showCourse();
-            Course EnrolledCourse = checkCourse(courseList);
+
+            Course EnrolledCourse = inputCourse(input,courseList);
             // Show sem and check sem id exist
             showSem();
-            String sem = checkSem(semList);
+            String sem = inputSem(input, semList);
             // Create Stu Enroll
             StudentEnrollment studentEnrollment = new StudentEnrollment(EnrolledStudent,EnrolledCourse,sem);
             //Check Duplicate
@@ -229,7 +235,7 @@ public class Command implements StudentEnrollmentManager {
                 System.out.println("Sucessfully add enrollment");
             }
 
-        }else if (option == 2){
+        }else if (option.equals("2")){
             // Show course of student
             List<StudentEnrollment> deleteEnrollmentList= showCourseOfStudent(updateId);
             //Check empty delete
@@ -238,7 +244,7 @@ public class Command implements StudentEnrollmentManager {
                 return;
             }
             // Show Update and Input delete
-            int deleteId = checkDeleteEnrollId(deleteEnrollmentList);
+            int deleteId = checkDeleteEnrollId(input, deleteEnrollmentList);
             //Get Enrollment that you want to delete
             StudentEnrollment DeletedEnroll = deleteEnrollmentList.get(deleteId-1);
             //Delete enrollment
@@ -248,15 +254,14 @@ public class Command implements StudentEnrollmentManager {
 
     }
 
-    private int chooseOption(){
+    private String chooseUpdateOption(Scanner input){
         System.out.println("What option you want to do");
         System.out.println("1. Add new course");
         System.out.println(("2. Delete course"));
         while(true) {
             System.out.print("Input your option: ");
-            Scanner input = new Scanner(System.in);
-            int option = input.nextInt();
-            if(option != 1 && option != 2){
+            String option = input.nextLine();
+            if(!option.equals("1")  && !option.equals("2")){
                 System.out.println("Wrong choice");
             }else{
                 return option;
@@ -270,33 +275,33 @@ public class Command implements StudentEnrollmentManager {
         // Show Course of Student
         System.out.println("Enrolled Courses: ");
         int count = 0;
-        List<StudentEnrollment> deleteCourse = new ArrayList<>();
+        List<StudentEnrollment> CourseOfStudent = new ArrayList<>();
         for(StudentEnrollment studentEnrollment :studentEnrollmentList){
             if(studentEnrollment.getStudent().getId().equals(updateId)){
                 count++;
                 System.out.println(count+ ": "+studentEnrollment.getCourse().getId()+" "+ studentEnrollment.getCourse().getName()+ " || "+studentEnrollment.getSemester());
-                deleteCourse.add(studentEnrollment);
+                CourseOfStudent.add(studentEnrollment);
             }
         }
-        return deleteCourse;
+        return CourseOfStudent;
 
     }
 
     @Override
     public void deleteEnrollment() {
+        Scanner input = new Scanner(System.in);
         // show All Enrollment
         getAllEnrollment();
         // Input and Check delete enroll ID
-        int deleteId = checkDeleteEnrollId(studentEnrollmentList);
+        int deleteId = checkDeleteEnrollId(input, studentEnrollmentList);
         //Remove enrollment
         studentEnrollmentList.remove(deleteId-1);
         System.out.println("Successfully delete");
     }
-    private int checkDeleteEnrollId(List<StudentEnrollment> studentEnrollmentList){
+    private int checkDeleteEnrollId(Scanner input, List<StudentEnrollment> studentEnrollmentList){
         // Input delete Id and check it
         while(true) {
             System.out.print("Input the number that you want to delete: ");
-            Scanner input = new Scanner(System.in);
             String s = input.nextLine();
             int deleteId = 0;
             try {
@@ -326,14 +331,15 @@ public class Command implements StudentEnrollmentManager {
     @Override
     public void getOneEnrollment() {
         // Show Student and Get sid
+        Scanner input = new Scanner(System.in);
         showStudents();
-        String sId = checkStudent(studentList).getId();
+        String sId = inputStudent(input, studentList).getId();
         // Show available Course and Get cId
-        HashSet<Course> availableCourseList =showAvailableCourse(sId);
-        String cId = checkCourse(availableCourseList).getId();
+        ArrayList<Course> availableCourseList =showAvailableCourse(sId);
+        String cId = inputCourse(input, availableCourseList).getId();
         //Show availabe Sem and Get sem;
         HashSet<String> availableSemList= showAvailableSem(sId,cId);
-        String sem = checkSem(availableSemList);
+        String sem = inputSem(input, availableSemList);
         // Main program
         for(StudentEnrollment studentEnrollment : studentEnrollmentList){
             if(studentEnrollment.getStudent().getId().equals(sId)&& studentEnrollment.getCourse().getId().equals(cId) && studentEnrollment.getSemester().equals(sem)){
@@ -341,9 +347,9 @@ public class Command implements StudentEnrollmentManager {
             }
         }
     }
-    private HashSet<Course> showAvailableCourse(String sId){
+    private ArrayList<Course> showAvailableCourse(String sId){
         System.out.println("Available Course: ");
-        HashSet<Course> availableCourse = new HashSet<>();
+        ArrayList<Course> availableCourse = new ArrayList<>();
         for(StudentEnrollment studentEnrollment : studentEnrollmentList){
             if(studentEnrollment.getStudent().getId().equals(sId)){
                 System.out.println(studentEnrollment.getCourse().getId()+ " || "+studentEnrollment.getCourse().getName());
@@ -464,6 +470,9 @@ public class Command implements StudentEnrollmentManager {
         }
         System.out.println(record);
         askSaveReport("Report3.csv",record);
+    }
+    public int getNumOfEnrollment(){
+        return studentEnrollmentList.size();
     }
 
 
